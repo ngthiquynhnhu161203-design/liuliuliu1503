@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VOCAB LAB - Full Power</title>
+    <title>VOCAB LAB - Master Mobile</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -32,7 +32,7 @@
             flex-direction: column; position: fixed; height: 100vh; z-index: 1100;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        nav h1 { font-size: 1.4rem; color: var(--accent); margin-bottom: 40px; text-align: center; letter-spacing: 1px; }
+        nav h1 { font-size: 1.5rem; color: var(--accent); margin-bottom: 40px; text-align: center; letter-spacing: 1px; cursor: pointer; }
         .nav-item {
             padding: 14px 20px; border-radius: 15px; cursor: pointer; transition: 0.3s;
             font-weight: 600; color: #64748b; margin-bottom: 8px; display: flex; align-items: center;
@@ -40,69 +40,64 @@
         .nav-item:hover, .nav-item.active { background: var(--primary); color: white; }
 
         /* Main Content */
-        main { flex-grow: 1; margin-left: 280px; padding: 40px; transition: 0.3s; width: calc(100% - 280px); }
-        .section { display: none; max-width: 1100px; margin: 0 auto; animation: fadeIn 0.4s ease; }
+        main { flex-grow: 1; margin-left: 280px; padding: 30px; transition: 0.3s; width: calc(100% - 280px); }
+        .section { display: none; max-width: 1000px; margin: 0 auto; animation: fadeIn 0.4s ease; }
         .section.active { display: block; }
-        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Overlay khi mở menu trên mobile */
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1050; backdrop-filter: blur(2px); }
-
-        /* Responsive cho Điện thoại */
+        /* Responsive */
         @media (max-width: 992px) {
             nav { transform: translateX(-100%); }
             nav.open { transform: translateX(0); }
             main { margin-left: 0; width: 100%; padding: 80px 15px 30px 15px; }
             .mobile-header { display: flex; }
+            .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1050; backdrop-filter: blur(2px); }
             nav.open + .overlay { display: block; }
         }
 
-        /* Forms & Inputs */
+        /* Glass Cards */
         .glass-card { background: var(--white); border-radius: 24px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.02); margin-bottom: 25px; }
         h2 { margin-top: 0; color: var(--accent); font-size: 1.2rem; border-left: 4px solid var(--primary); padding-left: 15px; margin-bottom: 20px; }
         
-        input, select { padding: 12px 18px; border: 2px solid #F1F5F9; border-radius: 12px; outline: none; background: #F8FAFC; transition: 0.3s; width: 100%; font-size: 16px; }
+        input, select { padding: 12px 15px; border: 2px solid #F1F5F9; border-radius: 12px; outline: none; background: #F8FAFC; transition: 0.3s; width: 100%; font-size: 16px; }
         input:focus { border-color: var(--primary); background: white; }
-        
-        .tag-container { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px; border: 2px solid #F1F5F9; border-radius: 12px; background: #F8FAFC; min-height: 48px; margin-bottom: 10px; }
-        .tag-container input { border: none !important; background: transparent !important; flex-grow: 1; width: auto; padding: 5px; }
-        .tag { background: var(--secondary); color: var(--accent); padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
 
-        .btn { padding: 14px 25px; border: none; border-radius: 12px; cursor: pointer; font-weight: 700; transition: 0.3s; display: inline-block; text-align: center; width: 100%; font-size: 1rem; }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(162, 210, 255, 0.4); }
+        /* Tags for Synonyms/Antonyms */
+        .tag-container { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border: 2px solid #F1F5F9; border-radius: 12px; background: #F8FAFC; min-height: 48px; margin-bottom: 12px; align-items: center; }
+        .tag-container input { border: none !important; background: transparent !important; flex-grow: 1; width: auto; padding: 4px; }
+        .tag { background: var(--secondary); color: var(--accent); padding: 5px 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+        .tag span { cursor: pointer; color: #ff6b6b; font-weight: bold; }
+
+        .btn { padding: 14px; border: none; border-radius: 12px; cursor: pointer; font-weight: 700; width: 100%; font-size: 1rem; transition: 0.3s; }
+        .btn-primary { background: var(--primary); color: white; }
         .btn-cloud { background: var(--cloud); color: white; margin-bottom: 10px; }
 
-        /* Bảng dữ liệu linh hoạt */
-        .table-container { margin-top: 25px; overflow-x: auto; border-radius: 15px; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        table { width: 100%; border-collapse: collapse; min-width: 900px; }
-        th { background: #F8FAFC; padding: 15px; color: #94A3B8; font-size: 0.75rem; text-transform: uppercase; border-bottom: 2px solid #F1F5F9; }
+        /* Table */
+        .table-container { margin-top: 20px; overflow-x: auto; border-radius: 15px; background: white; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { background: #F8FAFC; padding: 15px; color: #94A3B8; text-transform: uppercase; font-size: 0.75rem; border-bottom: 2px solid #F1F5F9; }
         td { padding: 15px; border-bottom: 1px solid #F1F5F9; font-size: 0.9rem; }
 
         /* Flashcard 3D */
         .flash-scene { width: 100%; max-width: 450px; height: 320px; perspective: 1200px; margin: 0 auto; }
         .c-inner { position: relative; width: 100%; height: 100%; transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
-        .c-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 30px; padding: 30px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); }
-        .face-1 { transform: rotateX(0deg) translateZ(110px); background: white; }
+        .c-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 30px; padding: 25px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.05); }
+        .face-1 { transform: rotateX(0deg) translateZ(110px); background: white; border: 2px solid var(--secondary); }
         .face-2 { transform: rotateX(120deg) translateZ(110px); background: var(--primary); color: white; }
         .face-3 { transform: rotateX(240deg) translateZ(110px); background: var(--accent); color: white; }
 
-        /* Quiz */
-        .timer-display { font-size: 2.5rem; font-weight: 800; text-align: center; color: var(--accent); margin-bottom: 20px; }
-        .quiz-item { margin-top: 15px; border-left: 5px solid var(--primary); }
-        .answer-reveal { margin-top: 10px; padding: 15px; background: #f0f7ff; border-radius: 12px; display: none; }
+        /* Quiz Timer */
+        .timer-display { font-size: 2.5rem; font-weight: 800; text-align: center; color: var(--accent); margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-<!-- Header cho Mobile -->
 <div class="mobile-header">
     <button class="menu-btn" onclick="toggleMenu()">☰</button>
     <div style="font-weight: 700; color: var(--accent); font-size: 1.2rem;">VOCAB LAB</div>
     <div style="width: 40px;"></div>
 </div>
 
-<!-- Sidebar Navigation -->
 <nav id="sidebar">
     <h1 onclick="toggleMenu()">VOCAB LAB</h1>
     <div class="nav-item active" onclick="switchTab('vocab', this)">Học từ vựng</div>
@@ -111,43 +106,43 @@
     <div class="nav-item" onclick="switchTab('dictation', this)">Luyện nghe</div>
     
     <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #eee;">
-        <small style="color:#94a3b8; display:block; margin-bottom:10px; text-align:center">ĐỒNG BỘ ĐÁM MÂY</small>
         <button class="btn btn-cloud" onclick="syncToCloud()">☁️ Lưu lên Cloud</button>
-        <button class="btn" style="background:#FFFFFF; color:var(--accent); border:2px solid var(--primary)" onclick="syncFromCloud()">📥 Tải từ Cloud</button>
+        <button class="btn" style="background:#eee; color:#666" onclick="syncFromCloud()">📥 Tải từ Cloud</button>
     </div>
 </nav>
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
 <main>
-    <!-- TAB: VOCAB (Full Chức năng nhập liệu) -->
+    <!-- TAB: VOCAB -->
     <div id="vocab" class="section active">
         <div class="glass-card">
             <h2>Quản lý từ vựng</h2>
             <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;">
-                <input type="text" id="wordIn" placeholder="Từ mới..." onblur="checkDuplicate(this.value)">
+                <input type="text" id="wordIn" placeholder="Nhập từ mới..." onblur="checkDuplicate(this.value)">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <select id="typeIn">
                         <option value="...">.....</option>
                         <option>Noun</option><option>Verb</option><option selected>Adj</option><option>Adv</option>
                     </select>
-                    <input type="text" id="meaningIn" placeholder="Nghĩa...">
+                    <input type="text" id="meaningIn" placeholder="Nghĩa của từ...">
                 </div>
             </div>
             
-            <p style="margin: 0 0 5px 5px; font-size: 0.8rem; color: #64748b;">Đồng nghĩa / Trái nghĩa:</p>
-            <div class="tag-container" id="synContainer"><input type="text" id="synInput" placeholder="Đồng nghĩa + Enter"></div>
-            <div class="tag-container" id="antContainer"><input type="text" id="antInput" placeholder="Trái nghĩa + Enter"></div>
+            <p style="margin: 0 0 5px 5px; font-size: 0.8rem; color: #64748b;">Đồng nghĩa & Trái nghĩa (Nhấn Enter sau mỗi từ):</p>
+            <div class="tag-container" id="synContainer">
+                <input type="text" id="synInput" placeholder="Đồng nghĩa...">
+            </div>
+            <div class="tag-container" id="antContainer">
+                <input type="text" id="antInput" placeholder="Trái nghĩa...">
+            </div>
             
-            <button class="btn btn-primary" style="margin-top:10px" onclick="saveWord()">+ THÊM VÀO KHO TỪ</button>
+            <button class="btn btn-primary" onclick="saveWord()">+ THÊM VÀO KHO TỪ</button>
             
             <div class="table-container">
                 <table id="vocabTable">
                     <thead>
                         <tr>
-                            <th style="width:50px">STT</th>
-                            <th style="width:50px">Học</th>
-                            <th>Từ vựng</th><th>Loại</th><th>Nghĩa</th><th>Đồng nghĩa</th><th>Trái nghĩa</th>
-                            <th style="text-align:center">Đ/S</th><th style="width:40px"></th>
+                            <th>STT</th><th>Học</th><th>Từ vựng</th><th>Loại</th><th>Nghĩa</th><th>Đồng/Trái</th><th>Đ/S</th><th></th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -156,24 +151,17 @@
         </div>
     </div>
 
-    <!-- TAB: FLASHCARD (Full 3 Mặt) -->
+    <!-- TAB: FLASHCARD -->
     <div id="flashcard" class="section">
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; gap:30px">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:30px; justify-content:center; min-height:60vh">
             <div class="flash-scene" onclick="rotateCard()">
                 <div class="c-inner" id="flashCardInner">
-                    <div class="c-face face-1">
-                        <small>VOCABULARY</small>
-                        <h2 id="f-word" style="font-size: 2.8rem; border:none; padding:0">...</h2>
-                    </div>
-                    <div class="c-face face-2">
-                        <small>MEANING</small>
-                        <h3 id="b-meaning" style="font-size: 2rem;">...</h3>
-                        <span id="f-type" style="font-weight:700"></span>
-                    </div>
+                    <div class="c-face face-1"><h2 id="f-word" style="font-size: 2.8rem;">...</h2></div>
+                    <div class="c-face face-2"><h3 id="b-meaning" style="font-size: 1.8rem;">...</h3><span id="f-type"></span></div>
                     <div class="c-face face-3">
-                        <small>EXTENSIONS</small>
-                        <div style="text-align: left; width: 100%; margin-top:15px; font-size: 0.9rem">
-                            <p id="b-syn"></p><p id="b-ant"></p>
+                        <div style="text-align: left; width: 100%;">
+                            <p id="b-syn" style="margin: 5px 0"></p>
+                            <p id="b-ant" style="margin: 5px 0"></p>
                         </div>
                     </div>
                 </div>
@@ -185,22 +173,21 @@
         </div>
     </div>
 
-    <!-- TAB: QUIZ (Full Tính năng) -->
+    <!-- TAB: QUIZ -->
     <div id="quiz" class="section">
         <div class="glass-card">
             <div id="quizSettings">
-                <h2>Thiết lập kiểm tra</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom:15px">
-                    <input type="number" id="quizLimit" value="5" placeholder="Số câu">
-                    <input type="number" id="quizTime" value="60" placeholder="Giây">
+                <h2>Thiết lập bài tập</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <input type="number" id="quizLimit" value="5">
+                    <input type="number" id="quizTime" value="60">
                 </div>
-                <select id="quizMode" style="margin-bottom:15px">
+                <select id="quizMode" style="margin-bottom: 15px">
                     <option value="wordToMeaning">Từ -> Nghĩa</option>
                     <option value="meaningToWord">Nghĩa -> Từ</option>
                 </select>
                 <button class="btn btn-primary" onclick="initQuiz()">BẮT ĐẦU</button>
             </div>
-            
             <div id="timerDisplay" class="timer-display" style="display:none">00:00</div>
             <div id="quizBox"></div>
             <button class="btn btn-primary" id="submitBtn" style="display:none; margin-top:20px" onclick="endQuiz()">NỘP BÀI</button>
@@ -209,10 +196,9 @@
 
     <!-- TAB: DICTATION -->
     <div id="dictation" class="section">
-        <div class="glass-card" style="text-align: center; padding: 60px 20px;">
-            <h2>Luyện nghe TOEIC</h2>
-            <p>Mở trang luyện nghe Daily Dictation</p>
-            <a href="https://dailydictation.com/exercises/toeic" target="_blank" class="btn btn-primary" style="max-width: 300px;">🚀 ĐI TỚI WEBSITE</a>
+        <div class="glass-card" style="text-align: center; padding: 50px 20px;">
+            <h3>Luyện nghe Toeic</h3>
+            <a href="https://dailydictation.com/exercises/toeic" target="_blank" class="btn btn-primary" style="max-width: 300px;">ĐI TỚI DAILY DICTATION</a>
         </div>
     </div>
 </main>
@@ -222,10 +208,56 @@
     let db = JSON.parse(localStorage.getItem('my_eng_vFinal_db')) || [];
     let tempSyns = [], tempAnts = [], curIndex = 0, currentRotation = 0, timer, timeLeft;
 
-    function toggleMenu() {
-        document.getElementById('sidebar').classList.toggle('open');
+    // Sidebar Toggle
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
+
+    // Chống trùng
+    function checkDuplicate(val) {
+        if(!val.trim()) return;
+        const exists = db.some(item => item.word.toLowerCase() === val.toLowerCase().trim());
+        if (exists) alert(`Cảnh báo: Từ "${val}" đã có trong kho từ của bạn!`);
     }
 
+    // Tag Logic (Synonyms/Antonyms)
+    function handleTagInput(inputId, containerId, list) {
+        const input = document.getElementById(inputId);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const val = input.value.trim();
+                if (val) {
+                    list.push(val);
+                    input.value = '';
+                    renderTags(containerId, list);
+                }
+            }
+        });
+    }
+
+    function renderTags(containerId, list) {
+        const container = document.getElementById(containerId);
+        const input = container.querySelector('input');
+        container.innerHTML = '';
+        list.forEach((tag, i) => {
+            const tagEl = document.createElement('div');
+            tagEl.className = 'tag';
+            tagEl.innerHTML = `${tag} <span onclick="removeTag('${containerId}', ${i})">×</span>`;
+            container.appendChild(tagEl);
+        });
+        container.appendChild(input);
+        input.focus();
+    }
+
+    window.removeTag = (cId, i) => {
+        const list = (cId === 'synContainer') ? tempSyns : tempAnts;
+        list.splice(i, 1);
+        renderTags(cId, list);
+    };
+
+    handleTagInput('synInput', 'synContainer', tempSyns);
+    handleTagInput('antInput', 'antContainer', tempAnts);
+
+    // Navigation
     function switchTab(id, el) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -236,59 +268,47 @@
         if(id === 'flashcard') renderFlashcard();
     }
 
-    // Xử lý Tag Đồng nghĩa/Trái nghĩa
-    function setupTags(inputId, containerId, list) {
-        const input = document.getElementById(inputId);
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && input.value.trim() !== '') {
-                e.preventDefault(); list.push(input.value.trim()); input.value = ''; renderTags(document.getElementById(containerId), list);
-            }
-        });
-    }
-    function renderTags(container, list) {
-        const input = container.querySelector('input');
-        container.innerHTML = '';
-        list.forEach((tag, i) => {
-            const tagEl = document.createElement('div'); tagEl.className = 'tag';
-            tagEl.innerHTML = `${tag} <span onclick="removeTag('${container.id}', ${i})" style="cursor:pointer; color:red">×</span>`;
-            container.appendChild(tagEl);
-        });
-        container.appendChild(input);
-    }
-    window.removeTag = (cId, i) => {
-        if(cId === 'synContainer') tempSyns.splice(i, 1); else tempAnts.splice(i, 1);
-        renderTags(document.getElementById(cId), cId === 'synContainer' ? tempSyns : tempAnts);
-    };
-    setupTags('synInput', 'synContainer', tempSyns); setupTags('antInput', 'antContainer', tempAnts);
-
+    // Core Logic
     function saveWord() {
         const word = document.getElementById('wordIn').value, meaning = document.getElementById('meaningIn').value;
-        if(!word || !meaning) return alert("Điền đủ thông tin!");
+        if(!word || !meaning) return alert("Vui lòng nhập từ và nghĩa!");
+        
         db.push({ 
-            word: word.trim(), type: document.getElementById('typeIn').value, meaning: meaning.trim(),
-            syns: [...tempSyns], ants: [...tempAnts], correctCount: 0, wrongCount: 0, isLearned: false 
+            word: word.trim(), 
+            type: document.getElementById('typeIn').value, 
+            meaning: meaning.trim(),
+            syns: [...tempSyns], ants: [...tempAnts],
+            correctCount: 0, wrongCount: 0, isLearned: false 
         });
+        
         localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db));
-        tempSyns = []; tempAnts = []; renderTags(document.getElementById('synContainer'), []); renderTags(document.getElementById('antContainer'), []);
-        document.getElementById('wordIn').value = ''; document.getElementById('meaningIn').value = '';
+        
+        // Reset form
+        document.getElementById('wordIn').value = '';
+        document.getElementById('meaningIn').value = '';
+        tempSyns = []; tempAnts = [];
+        renderTags('synContainer', []); renderTags('antContainer', []);
         renderTable();
     }
 
     function renderTable() {
-        document.querySelector('#vocabTable tbody').innerHTML = db.map((item, idx) => `
+        const tbody = document.querySelector('#vocabTable tbody');
+        tbody.innerHTML = db.map((item, idx) => `
             <tr>
                 <td>${idx + 1}</td>
-                <td><input type="checkbox" ${item.isLearned ? 'checked' : ''} onchange="toggleLearned(${idx})"></td>
-                <td><b>${item.word}</b></td><td>${item.type}</td><td>${item.meaning}</td>
-                <td>${item.syns.join(', ')}</td><td>${item.ants.join(', ')}</td>
+                <td><input type="checkbox" ${item.isLearned ? 'checked' : ''} onchange="db[${idx}].isLearned=!db[${idx}].isLearned; localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db))"></td>
+                <td><b>${item.word}</b></td>
+                <td>${item.type}</td>
+                <td>${item.meaning}</td>
+                <td><small>S: ${item.syns.join(', ')}<br>A: ${item.ants.join(', ')}</small></td>
                 <td style="text-align:center"><small>✅${item.correctCount} ❌${item.wrongCount}</small></td>
                 <td onclick="deleteWord(${idx})" style="color:red; cursor:pointer">✕</td>
             </tr>`).join('');
     }
 
-    function toggleLearned(i) { db[i].isLearned = !db[i].isLearned; localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); }
-    function deleteWord(i) { if(confirm("Xóa?")) { db.splice(i, 1); localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); renderTable(); } }
+    function deleteWord(i) { if(confirm("Xóa từ này?")) { db.splice(i, 1); localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); renderTable(); } }
 
+    // Flashcard
     function rotateCard() { currentRotation -= 120; document.getElementById('flashCardInner').style.transform = `rotateX(${currentRotation}deg)`; }
     function renderFlashcard() {
         if(!db.length) return;
@@ -302,9 +322,10 @@
     }
     function navCard(s) { curIndex = (curIndex+s+db.length)%db.length; renderFlashcard(); }
 
+    // Quiz
     function initQuiz() {
         let available = db.filter(i => !i.isLearned);
-        if(!available.length) return alert("Không có từ để kiểm tra!");
+        if(!available.length) return alert("Hết từ để học rồi!");
         document.getElementById('quizSettings').style.display='none';
         document.getElementById('timerDisplay').style.display='block';
         document.getElementById('submitBtn').style.display='block';
@@ -315,8 +336,8 @@
             <div class="quiz-item glass-card" data-word="${item.word}">
                 <p>Câu ${i+1}: <b>${mode === 'wordToMeaning' ? item.word : item.meaning}</b></p>
                 <input type="text" placeholder="Nhập đáp án...">
-                <div class="answer-reveal" id="rev-${i}">Đáp án: ${item.word} (${item.type}) - ${item.meaning}</div>
-                <div class="self-grade" id="grade-${i}" style="display:none; gap:10px; margin-top:10px">
+                <div class="answer-reveal" id="rev-${i}">Đáp án: ${item.word} - ${item.meaning}</div>
+                <div id="grade-${i}" style="display:none; gap:10px; margin-top:10px">
                     <button class="btn" style="background:#88D66C; color:white" onclick="markQuiz('${item.word}', true, ${i})">ĐÚNG</button>
                     <button class="btn" style="background:#FF8A8A; color:white" onclick="markQuiz('${item.word}', false, ${i})">SAI</button>
                 </div>
@@ -333,26 +354,26 @@
     function endQuiz() {
         clearInterval(timer);
         document.getElementById('submitBtn').style.display='none';
-        document.querySelectorAll('.answer-reveal, .self-grade').forEach(el => el.style.display='flex');
+        document.querySelectorAll('.answer-reveal, [id^="grade-"]').forEach(el => el.style.display='flex');
     }
 
     function markQuiz(word, isCorrect, i) {
         const idx = db.findIndex(d => d.word === word);
         if(isCorrect) db[idx].correctCount++; else db[idx].wrongCount++;
         localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db));
-        document.getElementById(`grade-${i}`).innerHTML = "Đã ghi nhận!";
+        document.getElementById(`grade-${i}`).innerHTML = "✓ Đã lưu kết quả";
     }
 
+    // Cloud Sync
     async function syncToCloud() {
-        alert("Đang gửi dữ liệu...");
-        try { await fetch(CLOUD_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(db) }); alert("Thành công!"); } catch(e) { alert("Lỗi!"); }
+        if(!confirm("Lưu dữ liệu lên Cloud?")) return;
+        try { await fetch(CLOUD_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(db) }); alert("Đã lưu thành công!"); } catch(e) { alert("Lỗi kết nối!"); }
     }
-
     async function syncFromCloud() {
         try {
             const res = await fetch(CLOUD_URL); const data = await res.json();
-            if(data) { db = data; localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); renderTable(); alert("Đã tải!"); }
-        } catch(e) { alert("Lỗi!"); }
+            if(data) { db = data; localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); renderTable(); alert("Tải dữ liệu thành công!"); }
+        } catch(e) { alert("Lỗi tải dữ liệu!"); }
     }
 
     renderTable();
