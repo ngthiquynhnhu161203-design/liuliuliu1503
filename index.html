@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VOCAB LAB - Newest First</title>
+    <title>VOCAB LAB - Newest First & Search</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -87,6 +87,11 @@
         .face-3 { transform: rotateX(240deg) translateZ(120px); background: var(--accent); color: white; }
 
         .timer-display { font-size: 3rem; font-weight: 800; text-align: center; color: var(--accent); margin-bottom: 20px; text-shadow: 2px 2px 0px rgba(0,0,0,0.05); }
+
+        /* Search Box Specific Style */
+        .search-wrapper { margin-top: 30px; position: relative; }
+        .search-wrapper input { padding-left: 45px; border: 2px solid var(--secondary); background: white; }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; color: var(--accent); }
     </style>
 </head>
 <body>
@@ -135,6 +140,12 @@
             </div>
             
             <button class="btn btn-primary" onclick="saveWord()">+ THÊM VÀO KHO TỪ</button>
+
+            <!-- KHUNG TÌM KIẾM TỪ VỰNG -->
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Tìm kiếm từ vựng hoặc nghĩa của từ..." onkeyup="filterVocab()">
+            </div>
             
             <div class="table-container">
                 <table id="vocabTable">
@@ -258,7 +269,10 @@
         document.getElementById(id).classList.add('active');
         if(el) el.classList.add('active');
         if(window.innerWidth < 992) { document.getElementById('sidebar').classList.remove('open'); }
-        if(id === 'vocab') renderTable();
+        if(id === 'vocab') {
+            document.getElementById('searchInput').value = ''; // Reset ô tìm kiếm khi chuyển tab
+            renderTable();
+        }
         if(id === 'flashcard') renderFlashcard();
     }
 
@@ -267,7 +281,6 @@
         const word = document.getElementById('wordIn').value, meaning = document.getElementById('meaningIn').value;
         if(!word || !meaning) return alert("Vui lòng điền đủ Từ và Nghĩa!");
         
-        // Dùng unshift để thêm vào đầu mảng db
         db.unshift({ 
             word: word.trim(), 
             type: document.getElementById('typeIn').value, 
@@ -286,23 +299,42 @@
         renderTable();
     }
 
-    function renderTable() {
+    // Hàm lọc từ vựng
+    function filterVocab() {
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        const filteredData = db.filter(item => 
+            item.word.toLowerCase().includes(query) || 
+            item.meaning.toLowerCase().includes(query)
+        );
+        renderTable(filteredData);
+    }
+
+    function renderTable(dataToRender = db) {
         const tbody = document.querySelector('#vocabTable tbody');
-        // Ở đây db đã có thứ tự mới nhất ở đầu, STT sẽ hiển thị ngược lại để đúng số lượng
-        tbody.innerHTML = db.map((item, idx) => `
+        // STT vẫn tính dựa trên vị trí gốc trong mảng db để không bị loạn số thứ tự
+        tbody.innerHTML = dataToRender.map((item) => {
+            const originalIdx = db.indexOf(item); // Lấy index gốc để các hàm xóa/check ko bị sai
+            return `
             <tr>
-                <td>${db.length - idx}</td>
-                <td><input type="checkbox" style="width:20px; height:20px" ${item.isLearned ? 'checked' : ''} onchange="db[${idx}].isLearned=!db[${idx}].isLearned; localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db))"></td>
+                <td>${db.length - originalIdx}</td>
+                <td><input type="checkbox" style="width:20px; height:20px" ${item.isLearned ? 'checked' : ''} onchange="db[${originalIdx}].isLearned=!db[${originalIdx}].isLearned; localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db))"></td>
                 <td><b>${item.word}</b></td>
                 <td><span style="color:#6096BA">${item.type}</span></td>
                 <td>${item.meaning}</td>
                 <td><small><b>S:</b> ${item.syns.join(', ')}<br><b>A:</b> ${item.ants.join(', ')}</small></td>
                 <td><small>✅${item.correctCount} ❌${item.wrongCount}</small></td>
-                <td onclick="deleteWord(${idx})" style="color:#FF8A8A; cursor:pointer; font-weight:bold; font-size:1.2rem">✕</td>
-            </tr>`).join('');
+                <td onclick="deleteWord(${originalIdx})" style="color:#FF8A8A; cursor:pointer; font-weight:bold; font-size:1.2rem">✕</td>
+            </tr>`;
+        }).join('');
     }
 
-    function deleteWord(i) { if(confirm("Xóa từ vựng này?")) { db.splice(i, 1); localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); renderTable(); } }
+    function deleteWord(i) { 
+        if(confirm("Xóa từ vựng này?")) { 
+            db.splice(i, 1); 
+            localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); 
+            filterVocab(); // Cập nhật lại giao diện dựa trên tìm kiếm hiện tại
+        } 
+    }
 
     function rotateCard() { currentRotation -= 120; document.getElementById('flashCardInner').style.transform = `rotateX(${currentRotation}deg)`; }
     function renderFlashcard() {
