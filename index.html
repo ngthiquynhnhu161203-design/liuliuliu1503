@@ -100,7 +100,13 @@
             <h2>Quản lý từ vựng</h2>
             <div style="display: grid; grid-template-columns: 2fr 1fr 2fr; gap: 15px; margin-bottom: 15px;">
                 <input type="text" id="wordIn" placeholder="Từ mới..." onblur="checkDuplicate(this.value)">
-                <select id="typeIn"><option>Noun</option><option>Verb</option><option selected>Adj</option><option>Adv</option></select>
+                <select id="typeIn">
+                    <option value="...">.....</option>
+                    <option>Noun</option>
+                    <option>Verb</option>
+                    <option selected>Adj</option>
+                    <option>Adv</option>
+                </select>
                 <input type="text" id="meaningIn" placeholder="Nghĩa...">
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
@@ -330,7 +336,7 @@
         document.getElementById('flashCardInner').style.transform = `rotateX(0deg)`;
         document.getElementById('f-word').innerText = item.word;
         document.getElementById('b-meaning').innerText = item.meaning;
-        document.getElementById('f-type').innerText = `(${item.type})`;
+        document.getElementById('f-type').innerText = item.type === '...' ? '' : `(${item.type})`;
         document.getElementById('b-syn').innerHTML = "<b>Đồng nghĩa:</b> " + (item.syns.join(', ') || '...');
         document.getElementById('b-ant').innerHTML = "<b>Trái nghĩa:</b> " + (item.ants.join(', ') || '...');
     }
@@ -350,8 +356,8 @@
         document.getElementById('quizBox').innerHTML = quizSet.map((item, i) => `
             <div class="quiz-item glass-card" id="q-item-${i}" data-word="${item.word}">
                 <p>Câu ${i+1}: <b>${mode === 'wordToMeaning' ? item.word : item.meaning}</b></p>
-                <div class="quiz-inputs"><input type="text" placeholder="Nhập..."><select><option value="">Loại...</option><option>Noun</option><option>Verb</option><option>Adj</option><option>Adv</option></select></div>
-                <div class="answer-reveal" id="reveal-${i}">Đáp án: ${item.word} (${item.type}) - ${item.meaning}</div>
+                <div class="quiz-inputs"><input type="text" placeholder="Nhập..."><select><option value="...">.....</option><option>Noun</option><option>Verb</option><option>Adj</option><option>Adv</option></select></div>
+                <div class="answer-reveal" id="reveal-${i}">Đáp án: ${item.word} ${item.type === '...' ? '' : '('+item.type+')'} - ${item.meaning}</div>
                 <div class="self-grade-btns" id="grade-${i}">
                     <button class="btn" style="background:var(--success); color:white; flex:1" onclick="manualGrade(${i}, true)">ĐÚNG</button>
                     <button class="btn" style="background:var(--danger); color:white; flex:1" onclick="manualGrade(${i}, false)">SAI</button>
