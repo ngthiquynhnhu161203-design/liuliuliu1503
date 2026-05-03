@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VOCAB LAB - Pro Max</title>
+    <title>VOCAB LAB - Newest First</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -62,7 +62,7 @@
         input, select { padding: 12px 15px; border: 2px solid #F1F5F9; border-radius: 12px; outline: none; background: #F8FAFC; transition: 0.3s; width: 100%; font-size: 16px; }
         input:focus { border-color: var(--primary); background: white; }
 
-        /* Tags fix */
+        /* Tags Fix */
         .tag-container { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; border: 2px solid #F1F5F9; border-radius: 15px; background: #F8FAFC; min-height: 55px; margin-bottom: 12px; align-items: center; }
         .tag-container input { border: none !important; background: transparent !important; flex-grow: 1; width: 150px; padding: 5px; margin: 0; }
         .tag { background: var(--secondary); color: var(--accent); padding: 6px 14px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -120,7 +120,7 @@
                 <input type="text" id="wordIn" placeholder="Nhập từ vựng..." onblur="checkDuplicate(this.value)">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <select id="typeIn">
-                        <option>Noun</option><option>Verb</option><option selected>Adj</option><option>Adv</option><option>Phrase</option><option>Conjunction</option><option>Giới từ (Preposition)</option>
+                        <option>Noun</option><option>Verb</option><option selected>Adj</option><option>Adv</option><option>Phrase</option>
                     </select>
                     <input type="text" id="meaningIn" placeholder="Nghĩa của từ...">
                 </div>
@@ -168,7 +168,7 @@
                 </div>
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; width: 100%; max-width: 450px;">
-                <button class="btn" style="background:#e2e8f0; color:#475569" onclick="navCard(-1)">Trướcc</button>
+                <button class="btn" style="background:#e2e8f0; color:#475569" onclick="navCard(-1)">Trước</button>
                 <button class="btn btn-primary" onclick="navCard(1)">Tiếp theo</button>
             </div>
         </div>
@@ -220,7 +220,7 @@
         if (exists) alert(`⚠️ Từ "${val}" đã có trong danh sách rồi bạn nhé!`);
     }
 
-    // Xử lý Thẻ Đồng nghĩa / Trái nghĩa (Fix lỗi lặp từ)
+    // Xử lý Tag Đồng nghĩa / Trái nghĩa
     function handleTagKey(e, type) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -241,25 +241,17 @@
     function renderTags(containerId, list, type) {
         const container = document.getElementById(containerId);
         const inputHtml = `<input type="text" id="${type}Input" placeholder="${type === 'syn' ? 'Đồng nghĩa...' : 'Trái nghĩa...'}" onkeydown="handleTagKey(event, '${type}')">`;
-        
         container.innerHTML = list.map((tag, i) => `
             <div class="tag">${tag} <span onclick="removeTag('${type}', ${i})">×</span></div>
         `).join('') + inputHtml;
-        
         document.getElementById(`${type}Input`).focus();
     }
 
     window.removeTag = (type, i) => {
-        if (type === 'syn') {
-            tempSyns.splice(i, 1);
-            renderTags('synContainer', tempSyns, 'syn');
-        } else {
-            tempAnts.splice(i, 1);
-            renderTags('antContainer', tempAnts, 'ant');
-        }
+        if (type === 'syn') { tempSyns.splice(i, 1); renderTags('synContainer', tempSyns, 'syn'); } 
+        else { tempAnts.splice(i, 1); renderTags('antContainer', tempAnts, 'ant'); }
     };
 
-    // Chuyển Tab
     function switchTab(id, el) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -270,12 +262,13 @@
         if(id === 'flashcard') renderFlashcard();
     }
 
-    // Lưu từ vựng
+    // LƯU TỪ: Dùng unshift để đẩy lên đầu mảng
     function saveWord() {
         const word = document.getElementById('wordIn').value, meaning = document.getElementById('meaningIn').value;
         if(!word || !meaning) return alert("Vui lòng điền đủ Từ và Nghĩa!");
         
-        db.push({ 
+        // Dùng unshift để thêm vào đầu mảng db
+        db.unshift({ 
             word: word.trim(), 
             type: document.getElementById('typeIn').value, 
             meaning: meaning.trim(),
@@ -285,7 +278,6 @@
         
         localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db));
         
-        // Reset form hoàn toàn
         document.getElementById('wordIn').value = '';
         document.getElementById('meaningIn').value = '';
         tempSyns = []; tempAnts = [];
@@ -296,9 +288,10 @@
 
     function renderTable() {
         const tbody = document.querySelector('#vocabTable tbody');
+        // Ở đây db đã có thứ tự mới nhất ở đầu, STT sẽ hiển thị ngược lại để đúng số lượng
         tbody.innerHTML = db.map((item, idx) => `
             <tr>
-                <td>${idx + 1}</td>
+                <td>${db.length - idx}</td>
                 <td><input type="checkbox" style="width:20px; height:20px" ${item.isLearned ? 'checked' : ''} onchange="db[${idx}].isLearned=!db[${idx}].isLearned; localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db))"></td>
                 <td><b>${item.word}</b></td>
                 <td><span style="color:#6096BA">${item.type}</span></td>
@@ -311,7 +304,6 @@
 
     function deleteWord(i) { if(confirm("Xóa từ vựng này?")) { db.splice(i, 1); localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); renderTable(); } }
 
-    // Flashcard logic 3 mặt
     function rotateCard() { currentRotation -= 120; document.getElementById('flashCardInner').style.transform = `rotateX(${currentRotation}deg)`; }
     function renderFlashcard() {
         if(!db.length) return;
@@ -325,32 +317,26 @@
     }
     function navCard(s) { curIndex = (curIndex+s+db.length)%db.length; renderFlashcard(); }
 
-    // Quiz Logic
     function initQuiz() {
         let available = db.filter(i => !i.isLearned);
         if(available.length === 0) return alert("Kho từ trống hoặc tất cả từ đã thuộc!");
-        
         document.getElementById('quizSettings').style.display='none';
         document.getElementById('timerDisplay').style.display='block';
         document.getElementById('submitBtn').style.display='block';
-        
         let quizSet = available.sort(() => 0.5 - Math.random()).slice(0, document.getElementById('quizLimit').value);
         const mode = document.getElementById('quizMode').value;
-        
         document.getElementById('quizBox').innerHTML = quizSet.map((item, i) => `
             <div class="quiz-item glass-card" style="border-left: 5px solid var(--primary)">
                 <p>Câu ${i+1}: <b style="font-size:1.2rem; color:var(--accent)">${mode === 'wordToMeaning' ? item.word : item.meaning}</b></p>
                 <input type="text" placeholder="Gõ câu trả lời của bạn..." style="background:white; border: 2px solid #e2e8f0">
                 <div class="answer-reveal" id="rev-${i}" style="display:none; margin-top:15px; padding:10px; background:#f0f9ff; border-radius:10px; font-size:0.9rem">
-                    <b>Đáp án:</b> ${item.word} (${item.type}) - ${item.meaning}<br>
-                    <small>S: ${item.syns.join(', ')} | A: ${item.ants.join(', ')}</small>
+                    <b>Đáp án:</b> ${item.word} (${item.type}) - ${item.meaning}
                 </div>
                 <div id="grade-${i}" style="display:none; gap:10px; margin-top:15px">
-                    <button class="btn" style="background:var(--success); color:white; padding:10px" onclick="markQuiz('${item.word}', true, ${i})">MÌNH ĐÃ ĐÚNG</button>
-                    <button class="btn" style="background:var(--danger); color:white; padding:10px" onclick="markQuiz('${item.word}', false, ${i})">MÌNH LÀM SAI</button>
+                    <button class="btn" style="background:var(--success); color:white; padding:10px" onclick="markQuiz('${item.word}', true, ${i})">ĐÚNG</button>
+                    <button class="btn" style="background:var(--danger); color:white; padding:10px" onclick="markQuiz('${item.word}', false, ${i})">SAI</button>
                 </div>
             </div>`).join('');
-        
         timeLeft = document.getElementById('quizTime').value;
         timer = setInterval(() => {
             timeLeft--;
@@ -359,42 +345,26 @@
         }, 1000);
     }
 
-    function endQuiz() {
-        clearInterval(timer);
-        document.getElementById('submitBtn').style.display='none';
-        document.querySelectorAll('.answer-reveal, [id^="grade-"]').forEach(el => el.style.display='flex');
-    }
-
+    function endQuiz() { clearInterval(timer); document.getElementById('submitBtn').style.display='none'; document.querySelectorAll('.answer-reveal, [id^="grade-"]').forEach(el => el.style.display='flex'); }
     function markQuiz(word, isCorrect, i) {
         const idx = db.findIndex(d => d.word === word);
         if(isCorrect) db[idx].correctCount++; else db[idx].wrongCount++;
         localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db));
-        document.getElementById(`grade-${i}`).innerHTML = "✨ Đã lưu kết quả!";
+        document.getElementById(`grade-${i}`).innerHTML = "✨ Đã lưu!";
     }
 
-    // Đồng bộ Cloud (Giữ nguyên URL của bạn)
     async function syncToCloud() {
-        if(!confirm("Đẩy toàn bộ từ vựng lên Cloud?")) return;
-        try {
-            await fetch(CLOUD_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(db) });
-            alert("Đồng bộ thành công! Dữ liệu đã an toàn trên Cloud.");
-        } catch(e) { alert("Lỗi kết nối Cloud!"); }
+        if(!confirm("Đẩy dữ liệu lên Cloud?")) return;
+        try { await fetch(CLOUD_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(db) }); alert("Thành công!"); } catch(e) { alert("Lỗi!"); }
     }
     async function syncFromCloud() {
-        if(!confirm("Tải dữ liệu từ Cloud về? (Dữ liệu máy này sẽ bị ghi đè)")) return;
+        if(!confirm("Tải dữ liệu từ Cloud về?")) return;
         try {
-            const res = await fetch(CLOUD_URL); 
-            const data = await res.json();
-            if(data) { 
-                db = data; 
-                localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); 
-                renderTable(); 
-                alert("Tải dữ liệu thành công!"); 
-            }
-        } catch(e) { alert("Không có dữ liệu trên Cloud hoặc lỗi!"); }
+            const res = await fetch(CLOUD_URL); const data = await res.json();
+            if(data) { db = data; localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); renderTable(); alert("Thành công!"); }
+        } catch(e) { alert("Lỗi!"); }
     }
 
-    // Chạy mặc định
     renderTable();
 </script>
 </body>
