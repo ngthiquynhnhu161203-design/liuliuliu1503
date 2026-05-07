@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VOCAB LAB - Newest First & Shortcuts</title>
+    <title>VOCAB LAB - Responsive Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -45,7 +45,7 @@
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Responsive */
+        /* Responsive Breakpoints */
         @media (max-width: 992px) {
             nav { transform: translateX(-100%); }
             nav.open { transform: translateX(0); }
@@ -78,23 +78,31 @@
         th { background: #F8FAFC; padding: 18px; color: #94A3B8; text-transform: uppercase; font-size: 0.75rem; border-bottom: 2px solid #F1F5F9; text-align: left; }
         td { padding: 18px; border-bottom: 1px solid #F1F5F9; font-size: 0.95rem; }
 
-        /* Flashcard 3D - Optimized for Mobile */
+        /* --- FLASHCARD 3D - AUTO SIZE --- */
         .flash-scene { 
             width: 100%; 
-            max-width: 340px; /* Thu nhỏ chiều ngang */
-            height: 280px;    /* Thu nhỏ chiều cao */
-            perspective: 1200px; 
+            max-width: 500px; /* To hơn trên Laptop */
+            height: 350px;    /* To hơn trên Laptop */
+            perspective: 1500px; 
             margin: 0 auto; 
         }
-        .c-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
-        .c-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 30px; padding: 25px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.08); }
-        
-        .face-1 { transform: rotateX(0deg) translateZ(100px); background: white; border: 2px solid var(--secondary); }
-        .face-2 { transform: rotateX(120deg) translateZ(100px); background: var(--primary); color: white; }
-        .face-3 { transform: rotateX(240deg) translateZ(100px); background: var(--accent); color: white; }
 
-        #f-word { font-size: 2.2rem !important; margin:0; word-break: break-word; }
-        #b-meaning { font-size: 1.6rem !important; margin:0 0 10px 0; }
+        /* Khi dùng điện thoại, thẻ sẽ tự nhỏ lại */
+        @media (max-width: 600px) {
+            .flash-scene { max-width: 320px; height: 280px; }
+            #f-word { font-size: 2.2rem !important; }
+            #b-meaning { font-size: 1.6rem !important; }
+        }
+
+        .c-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
+        .c-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 30px; padding: 30px; text-align: center; box-shadow: 0 15px 45px rgba(0,0,0,0.1); }
+        
+        .face-1 { transform: rotateX(0deg) translateZ(120px); background: white; border: 2px solid var(--secondary); }
+        .face-2 { transform: rotateX(120deg) translateZ(120px); background: var(--primary); color: white; }
+        .face-3 { transform: rotateX(240deg) translateZ(120px); background: var(--accent); color: white; }
+
+        #f-word { font-size: 3rem; margin:0; word-break: break-word; font-weight: 700; color: var(--accent); }
+        #b-meaning { font-size: 2.2rem; margin:0 0 10px 0; font-weight: 700; }
 
         .timer-display { font-size: 3rem; font-weight: 800; text-align: center; color: var(--accent); margin-bottom: 20px; text-shadow: 2px 2px 0px rgba(0,0,0,0.05); }
 
@@ -168,7 +176,7 @@
     </div>
 
     <div id="flashcard" class="section">
-        <div style="display:flex; flex-direction:column; align-items:center; gap:25px; justify-content:center; min-height:70vh">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:30px; justify-content:center; min-height:75vh">
             <div class="flash-scene" onclick="rotateCard()">
                 <div class="c-inner" id="flashCardInner">
                     <div class="c-face face-1"><h2 id="f-word">...</h2></div>
@@ -177,18 +185,18 @@
                         <span id="f-type" style="background:rgba(255,255,255,0.3); padding:5px 15px; border-radius:10px"></span>
                     </div>
                     <div class="c-face face-3">
-                        <div style="text-align: left; width: 100%; font-size: 0.9rem;">
-                            <p id="b-syn" style="margin: 5px 0; line-height:1.4"></p>
-                            <p id="b-ant" style="margin: 5px 0; line-height:1.4"></p>
+                        <div style="text-align: left; width: 100%; font-size: 1rem;">
+                            <p id="b-syn" style="margin: 10px 0; line-height:1.5"></p>
+                            <p id="b-ant" style="margin: 10px 0; line-height:1.5"></p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; width: 100%; max-width: 340px;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; width: 100%; max-width: 500px;">
                 <button class="btn" style="background:#e2e8f0; color:#475569" onclick="navCard(-1)">Trước (←)</button>
                 <button class="btn btn-primary" onclick="navCard(1)">Tiếp theo (→)</button>
             </div>
-            <p style="color:#94a3b8; font-size:0.85rem; font-weight:600">Mẹo: Nhấn SPACE để lật nhanh</p>
+            <p style="color:#94a3b8; font-size:0.9rem; font-weight:600">Nhấn SPACE để lật thẻ | Mũi tên ← → để chuyển từ</p>
         </div>
     </div>
 
