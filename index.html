@@ -71,6 +71,7 @@
         .btn { padding: 16px; border: none; border-radius: 15px; cursor: pointer; font-weight: 700; width: 100%; font-size: 1rem; transition: 0.3s; }
         .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(162, 210, 255, 0.4); }
         .btn-cloud { background: var(--cloud); color: white; margin-bottom: 10px; }
+        .btn-accent { background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(96, 150, 186, 0.4); }
 
         /* Table */
         .table-container { margin-top: 25px; overflow-x: auto; border-radius: 20px; background: white; box-shadow: 0 5px 20px rgba(0,0,0,0.02); }
@@ -136,7 +137,7 @@
 <main>
     <div id="vocab" class="section active">
         <div class="glass-card">
-            <h2>Thêm từ vựng mới</h2>
+            <h2 id="formTitle">Thêm từ vựng mới</h2>
             <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px;">
                 <input type="text" id="wordIn" placeholder="Nhập từ vựng..." onblur="checkDuplicate(this.value)">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -155,7 +156,9 @@
                 <input type="text" id="antInput" placeholder="Trái nghĩa..." onkeydown="handleTagKey(event, 'ant')">
             </div>
             
-            <button class="btn btn-primary" onclick="saveWord()">+ THÊM VÀO KHO TỪ</button>
+            <div style="display: flex; gap: 10px;" id="actionBtnWrapper">
+                <button class="btn btn-primary" id="mainActionBtn" onclick="saveWord()">+ THÊM VÀO KHO TỪ</button>
+            </div>
 
             <div class="search-wrapper">
                 <span class="search-icon">🔍</span>
@@ -166,7 +169,7 @@
                 <table id="vocabTable">
                     <thead>
                         <tr>
-                            <th>STT</th><th>Học</th><th>Từ vựng</th><th>Loại</th><th>Nghĩa</th><th>Đồng/Trái</th><th>Đ/S</th><th></th>
+                            <th>STT</th><th>Học</th><th>Từ vựng</th><th>Loại</th><th>Nghĩa</th><th>Đồng/Trái</th><th>Đ/S</th><th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -234,11 +237,12 @@
     const CLOUD_URL = "https://script.google.com/macros/s/AKfycbyjwCy7fWpGdyepsPYVcu-fS_EUWDWNe2m0ysxfoQn6I5aCUbboHgu1DMZvx401gcI-OQ/exec";
     let db = JSON.parse(localStorage.getItem('my_eng_vFinal_db')) || [];
     let tempSyns = [], tempAnts = [], curIndex = 0, currentRotation = 0, timer, timeLeft;
+    let editIndex = null; // Biến lưu index từ đang chỉnh sửa
 
     function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
 
     function checkDuplicate(val) {
-        if(!val.trim()) return;
+        if(!val.trim() || editIndex !== null) return; // Không check trùng khi đang ở chế độ sửa từ
         const exists = db.some(item => item.word.toLowerCase() === val.toLowerCase().trim());
         if (exists) alert(`⚠️ Từ "${val}" đã có trong danh sách rồi!`);
     }
@@ -275,18 +279,77 @@
         document.getElementById(id).classList.add('active');
         if(el) el.classList.add('active');
         if(window.innerWidth < 992) { document.getElementById('sidebar').classList.remove('open'); }
-        if(id === 'vocab') { document.getElementById('searchInput').value = ''; renderTable(); }
+        if(id === 'vocab') { document.getElementById('searchInput').value = ''; cancelEdit(); renderTable(); }
         if(id === 'flashcard') renderFlashcard();
     }
 
     function saveWord() {
         const word = document.getElementById('wordIn').value, meaning = document.getElementById('meaningIn').value;
         if(!word || !meaning) return alert("Vui lòng điền đủ Từ và Nghĩa!");
+        
         db.unshift({ word: word.trim(), type: document.getElementById('typeIn').value, meaning: meaning.trim(), syns: [...tempSyns], ants: [...tempAnts], correctCount: 0, wrongCount: 0, isLearned: false });
         localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db));
-        document.getElementById('wordIn').value = ''; document.getElementById('meaningIn').value = '';
-        tempSyns = []; tempAnts = []; renderTags('synContainer', [], 'syn'); renderTags('antContainer', [], 'ant');
+        resetForm();
         renderTable();
+    }
+
+    /* --- EDIT LOGIC --- */
+    function startEdit(originalIdx) {
+        editIndex = originalIdx;
+        const item = db[originalIdx];
+        
+        // Đẩy dữ liệu lên form nhập liệu
+        document.getElementById('formTitle').innerText = "Chỉnh sửa từ vựng";
+        document.getElementById('wordIn').value = item.word;
+        document.getElementById('typeIn').value = item.type;
+        document.getElementById('meaningIn').value = item.meaning;
+        
+        // Load tags đồng nghĩa / trái nghĩa
+        tempSyns = [...item.syns];
+        tempAnts = [...item.ants];
+        renderTags('synContainer', tempSyns, 'syn');
+        renderTags('antContainer', tempAnts, 'ant');
+        
+        // Đổi nút chức năng thành Cập nhật và thêm nút Hủy
+        const wrapper = document.getElementById('actionBtnWrapper');
+        wrapper.innerHTML = `
+            <button class="btn btn-accent" style="flex: 2" onclick="updateWord()">✓ CẬP NHẬT TỪ VỰNG</button>
+            <button class="btn" style="flex: 1; background:#e2e8f0; color:#475569" onclick="cancelEdit()">Hủy</button>
+        `;
+        
+        // Cuộn màn hình lên đầu form để tiện chỉnh sửa
+        document.getElementById('formTitle').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function updateWord() {
+        const word = document.getElementById('wordIn').value, meaning = document.getElementById('meaningIn').value;
+        if(!word || !meaning) return alert("Vui lòng điền đủ Từ và Nghĩa!");
+        
+        // Cập nhật lại data tại vị trí đang edit mà không đổi vị trí hay reset điểm Đ/S
+        db[editIndex].word = word.trim();
+        db[editIndex].type = document.getElementById('typeIn').value;
+        db[editIndex].meaning = meaning.trim();
+        db[editIndex].syns = [...tempSyns];
+        db[editIndex].ants = [...tempAnts];
+        
+        localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db));
+        cancelEdit();
+        renderTable();
+    }
+
+    function cancelEdit() {
+        editIndex = null;
+        document.getElementById('formTitle').innerText = "Thêm từ vựng mới";
+        resetForm();
+        document.getElementById('actionBtnWrapper').innerHTML = `<button class="btn btn-primary" id="mainActionBtn" onclick="saveWord()">+ THÊM VÀO KHO TỪ</button>`;
+    }
+
+    function resetForm() {
+        document.getElementById('wordIn').value = ''; 
+        document.getElementById('meaningIn').value = '';
+        tempSyns = []; tempAnts = []; 
+        renderTags('synContainer', [], 'syn'); 
+        renderTags('antContainer', [], 'ant');
     }
 
     function filterVocab() {
@@ -299,7 +362,7 @@
         const tbody = document.querySelector('#vocabTable tbody');
         tbody.innerHTML = dataToRender.map((item) => {
             const originalIdx = db.indexOf(item);
-            return `<tr>
+            return `<tr style="${editIndex === originalIdx ? 'background-color: #f1f5f9;' : ''}">
                 <td>${db.length - originalIdx}</td>
                 <td><input type="checkbox" style="width:20px; height:20px" ${item.isLearned ? 'checked' : ''} onchange="db[${originalIdx}].isLearned=!db[${originalIdx}].isLearned; localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db))"></td>
                 <td><b>${item.word}</b></td>
@@ -307,12 +370,24 @@
                 <td>${item.meaning}</td>
                 <td><small><b>S:</b> ${item.syns.join(', ')}<br><b>A:</b> ${item.ants.join(', ')}</small></td>
                 <td><small>✅${item.correctCount} ❌${item.wrongCount}</small></td>
-                <td onclick="deleteWord(${originalIdx})" style="color:#FF8A8A; cursor:pointer; font-weight:bold; font-size:1.2rem">✕</td>
+                <td>
+                    <div style="display: flex; gap: 15px; font-size: 1.1rem;">
+                        <span onclick="startEdit(${originalIdx})" style="color:var(--accent); cursor:pointer;" title="Sửa từ">✏️</span>
+                        <span onclick="deleteWord(${originalIdx})" style="color:#FF8A8A; cursor:pointer; font-weight:bold;" title="Xóa từ">✕</span>
+                    </div>
+                </td>
             </tr>`;
         }).join('');
     }
 
-    function deleteWord(i) { if(confirm("Xóa từ vựng này?")) { db.splice(i, 1); localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); filterVocab(); } }
+    function deleteWord(i) { 
+        if(confirm("Xóa từ vựng này?")) { 
+            if(editIndex === i) cancelEdit();
+            db.splice(i, 1); 
+            localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db)); 
+            filterVocab(); 
+        } 
+    }
 
     /* --- FLASHCARD LOGIC --- */
     function rotateCard() { currentRotation -= 120; document.getElementById('flashCardInner').style.transform = `rotateX(${currentRotation}deg)`; }
@@ -369,8 +444,10 @@
     function endQuiz() { clearInterval(timer); document.getElementById('submitBtn').style.display='none'; document.querySelectorAll('.answer-reveal, [id^="grade-"]').forEach(el => el.style.display='flex'); }
     function markQuiz(word, isCorrect, i) {
         const idx = db.findIndex(d => d.word === word);
-        if(isCorrect) db[idx].correctCount++; else db[idx].wrongCount++;
-        localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db));
+        if(idx !== -1) {
+            if(isCorrect) db[idx].correctCount++; else db[idx].wrongCount++;
+            localStorage.setItem('my_eng_vFinal_db', JSON.stringify(db));
+        }
         document.getElementById(`grade-${i}`).innerHTML = "✨ Đã lưu!";
     }
 
